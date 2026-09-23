@@ -1,0 +1,59 @@
+# Docker Compose configuration for local Eramba Community Edition simulation environment
+# Usage:
+#   docker compose -f docker-compose.sim.yml up -d
+#   docker compose -f docker-compose.sim.yml down -v
+
+services:
+  eramba-db:
+    image: mysql:8.0
+    container_name: grc-eramba-mysql
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: eramba_root_secure_pass
+      MYSQL_DATABASE: eramba
+      MYSQL_USER: eramba
+      MYSQL_PASSWORD: eramba_user_secure_pass
+    volumes:
+      - eramba_db_data:/var/lib/mysql
+    networks:
+      - grc-sim-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "eramba", "-peramba_user_secure_pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  eramba-redis:
+    image: redis:7-alpine
+    container_name: grc-eramba-redis
+    restart: unless-stopped
+    networks:
+      - grc-sim-net
+
+  eramba-web:
+    image: eramba/community:latest
+    container_name: grc-eramba-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      DATABASE_HOST: eramba-db
+      DATABASE_NAME: eramba
+      DATABASE_USER: eramba
+      DATABASE_PASSWORD: eramba_user_secure_pass
+      REDIS_HOST: eramba-redis
+    depends_on:
+      eramba-db:
+        condition: service_healthy
+      eramba-redis:
+        condition: service_started
+    networks:
+      - grc-sim-net
+
+volumes:
+  eramba_db_data:
+
+networks:
+  grc-sim-net:
+    driver: bridge
