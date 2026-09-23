@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISO 27001 Audit Simulation Terminal | GRC Learning Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-logo">GRC</div>
+        <div>
+          <h1 class="brand-title">ISO 27001:2022 Simulation Terminal</h1>
+          <p class="brand-subtitle">LangGraph Cognitive Lead Auditor &amp; Target Sandbox Orchestrator</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-active" id="engine-status">Engine: LangGraph StateGraph</span>
+        <span class="badge badge-sandbox" id="sandbox-status">Sandbox: Connected</span>
+        <span class="badge badge-session" id="session-badge">Session: Idle</span>
+      </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <main class="workspace-grid">
+      <!-- Left Panel: Controls & Sandbox Scenarios -->
+      <aside class="panel panel-sidebar">
+        <div class="panel-section">
+          <h2 class="panel-heading">1. Select Audit Scope</h2>
+          <label for="control-select" class="form-label">ISO 27001 Requirement</label>
+          <select id="control-select" class="form-select">
+            <option value="6.1.2">Clause 6.1.2 - Risk Assessment</option>
+            <option value="6.1.3">Clause 6.1.3 - Risk Treatment</option>
+            <option value="9.2">Clause 9.2 - Internal Audit</option>
+            <option value="A.5.15">A.5.15 - Access Control</option>
+            <option value="A.8.8">A.8.8 - Technical Vulnerabilities</option>
+            <option value="A.8.15">A.8.15 - Logging &amp; Monitoring</option>
+          </select>
+          <button id="btn-start-session" class="btn btn-primary">Initialize Audit Session</button>
+        </div>
+
+        <div class="panel-section">
+          <h2 class="panel-heading">2. Target Sandbox State</h2>
+          <p class="section-description">Configure the simulated target environment (Eramba / Systems) state to test auditor detection:</p>
+          <div class="scenario-buttons">
+            <button class="btn btn-scenario active" data-scenario="compliant" id="btn-scenario-compliant">
+              <span class="dot dot-green"></span> Compliant Baseline
+            </button>
+            <button class="btn btn-scenario" data-scenario="deficient_risk_owner" id="btn-scenario-deficient-risk">
+              <span class="dot dot-red"></span> Deficient: Missing Risk Owner
+            </button>
+            <button class="btn btn-scenario" data-scenario="missing_mfa" id="btn-scenario-missing-mfa">
+              <span class="dot dot-amber"></span> Deficient: Missing MFA
+            </button>
+            <button class="btn btn-scenario" data-scenario="empty" id="btn-scenario-empty">
+              <span class="dot dot-gray"></span> Empty: Zero Evidence
+            </button>
+          </div>
+          <div class="sandbox-info" id="sandbox-info-box">
+            Active Target: <strong>Mock Eramba Instance</strong>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Panel: Interactive Dialogue Terminal -->
+      <section class="panel panel-center">
+        <div class="terminal-header">
+          <div>
+            <span class="terminal-title" id="terminal-control-title">No Active Session</span>
+            <span class="terminal-phase" id="terminal-phase-badge">Status: STANDBY</span>
+          </div>
+          <div class="terminal-actions">
+            <button id="btn-ask-hint" class="btn btn-hint" title="Ask Socratic GRC Coach for advice without failing the audit">
+              Ask Coach (Hint)
+            </button>
+            <button id="btn-submit-eval" class="btn btn-conclude" title="Trigger formal auditor conclusion">
+              Submit for Audit Conclusion
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Stream Box -->
+        <div class="chat-container" id="chat-messages">
+          <div class="chat-placeholder" id="chat-placeholder">
+            <div class="placeholder-icon">🛡️</div>
+            <h3>ISO 27001 Surveillance Audit Lab</h3>
+            <p>Select an ISO control on the left and click <strong>Initialize Audit Session</strong> to begin the multi-turn interview with the AI Lead Auditor.</p>
+          </div>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form class="chat-form" id="chat-form">
+          <input
+            type="text"
+            id="chat-input"
+            class="chat-input"
+            placeholder="Type your response to the Lead Auditor, or describe evidence uploaded..."
+            disabled
+            autocomplete="off"
+          />
+          <button type="submit" id="btn-send" class="btn btn-send" disabled>Send</button>
+        </form>
+      </section>
+
+      <!-- Right Panel: Live Audit Scorecard & Findings -->
+      <aside class="panel panel-scorecard">
+        <h2 class="panel-heading">Live ISO 19011 Scorecard</h2>
+        
+        <div class="scorecard-section">
+          <h3 class="subheading">Control Specification</h3>
+          <div class="card-meta" id="scorecard-statement">
+            Select a control to review normative requirements and audit criteria.
+          </div>
+        </div>
+
+        <div class="scorecard-section">
+          <h3 class="subheading">Audit Evaluation &amp; Finding</h3>
+          <div class="finding-card" id="finding-container">
+            <div class="finding-header">
+              <span class="finding-severity severity-none" id="finding-severity">AWAITING EVALUATION</span>
+            </div>
+            <h4 class="finding-title" id="finding-title">Audit in Progress</h4>
+            <p class="finding-statement" id="finding-statement">
+              Provide your responses and upload required evidence in the simulated target to receive a formal finding.
+            </p>
+            <div class="finding-remediation" id="finding-remediation" style="display: none;">
+              <strong>Corrective Action Guidance:</strong>
+              <p id="finding-remediation-text"></p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
